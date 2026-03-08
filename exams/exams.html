@@ -1,18 +1,48 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>试卷入口</title>
 
 <script src="ads.js"></script>
 
 <style>
+
 body{
-font-family:Arial;
+font-family:Arial, sans-serif;
 background:#f8f8f8;
 padding:20px;
+margin:0;
+color:#333;
 }
+
+h2{
+margin-bottom:10px;
+}
+
+h3{
+margin-top:0;
+color:#666;
+font-weight:normal;
+}
+
+/* 搜索框 */
+
+#search{
+width:100%;
+max-width:420px;
+padding:12px 14px;
+font-size:16px;
+border:1px solid #ccc;
+border-radius:8px;
+box-sizing:border-box;
+margin-bottom:20px;
+}
+
+/* 文件夹 */
 
 .folder{
 display:block;
@@ -23,12 +53,21 @@ border-radius:8px;
 color:#0077cc;
 font-weight:bold;
 cursor:pointer;
-box-shadow:0 2px 5px rgba(0,0,0,0.1);
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+transition:0.2s;
 }
 
 .folder:hover{
 background:#e6f0ff;
+transform:translateY(-2px);
 }
+
+.tip{
+margin:25px 0 15px;
+text-align:center;
+color:#0077cc;
+}
+
 </style>
 
 </head>
@@ -37,15 +76,15 @@ background:#e6f0ff;
 
 <h2>试卷入口</h2>
 <h3>推荐使用加速器或者校园网访问</h3>
-<input id="search" placeholder="搜索试卷">
 
-<button onclick="searchFolders()">搜索</button>
+<input id="search" placeholder="搜索试卷..." oninput="searchFolders()">
 
 <div id="list"></div>
 
 <script>
 
 let exams={}
+let allFolders=[]
 
 fetch("pdf_mapping_nested.json")
 .then(r=>r.json())
@@ -57,15 +96,23 @@ render()
 function render(){
 
 let list=document.getElementById("list")
+list.innerHTML=""
+
+allFolders=[]
 
 for(let dir in exams){
+
 if(dir.startsWith("_")) continue
+
 if(dir==="---"){
 let d=document.createElement("div")
+d.className="tip"
 d.innerHTML="—— 以下为部分同学急需科目 ——"
 list.appendChild(d)
 continue
 }
+
+allFolders.push(dir)
 
 let div=document.createElement("div")
 div.className="folder"
@@ -83,15 +130,43 @@ list.appendChild(div)
 
 function searchFolders(){
 
-let kw=document.getElementById("search").value
+let kw=document.getElementById("search").value.trim()
 
 let folders=document.querySelectorAll(".folder")
 
+if(kw===""){
+folders.forEach(f=>f.style.display="block")
+return
+}
+
+let results=[]
+
 folders.forEach(f=>{
-if(f.innerText.includes(kw)){
-f.style.display="block"
-}else{
-f.style.display="none"
+
+let name=f.innerText
+
+let score=0
+
+for(let ch of kw){
+if(name.includes(ch)) score++
+}
+
+score=score/kw.length
+
+results.push({
+el:f,
+score:score
+})
+
+})
+
+results.sort((a,b)=>b.score-a.score)
+
+folders.forEach(f=>f.style.display="none")
+
+results.forEach(r=>{
+if(r.score>0.4){
+r.el.style.display="block"
 }
 })
 

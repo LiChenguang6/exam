@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -9,10 +10,17 @@
 <style>
 
 body{
-font-family:Arial;
+font-family:Arial, sans-serif;
 background:#f8f8f8;
 padding:20px;
+margin:0;
 }
+
+h2{
+margin-bottom:20px;
+}
+
+/* 文件 */
 
 .file a{
 display:block;
@@ -22,10 +30,27 @@ border-radius:8px;
 margin-bottom:10px;
 text-decoration:none;
 color:#0077cc;
+box-shadow:0 2px 6px rgba(0,0,0,0.1);
+transition:0.2s;
 }
 
 .file a:hover{
 background:#e6f0ff;
+transform:translateY(-2px);
+}
+
+.back{
+display:inline-block;
+margin-top:25px;
+padding:10px 14px;
+background:#eee;
+border-radius:6px;
+text-decoration:none;
+color:#555;
+}
+
+.back:hover{
+background:#ddd;
 }
 
 </style>
@@ -38,14 +63,14 @@ background:#e6f0ff;
 
 <div id="files"></div>
 
-<a href="index.html">返回</a>
+<a class="back" href="index.html">返回</a>
 
 <script>
 
 const urlParams=new URLSearchParams(location.search)
 const dir=urlParams.get("dir")
 
-document.getElementById("title").innerText=dir+"试卷"
+document.getElementById("title").innerText=dir+" 试卷"
 
 fetch("pdf_mapping_nested.json")
 .then(r=>r.json())
@@ -56,15 +81,14 @@ let files=data[dir]
 let container=document.getElementById("files")
 
 if(!files){
-
 container.innerHTML="暂无试卷"
-
 return
-
 }
 
 for(let name in files){
+
 if(name.startsWith("_")) continue
+
 let div=document.createElement("div")
 div.className="file"
 
