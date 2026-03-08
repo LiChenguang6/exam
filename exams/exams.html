@@ -34,7 +34,7 @@ font-weight:normal;
 .search-box{
 display:flex;
 max-width:420px;
-margin-bottom:20px;
+margin-bottom:10px;
 }
 
 .search-box input{
@@ -59,6 +59,23 @@ cursor:pointer;
 
 .search-box button:hover{
 background:#005fa3;
+}
+
+/* 返回按钮 */
+
+#resetBtn{
+display:none;
+margin-bottom:20px;
+padding:8px 16px;
+border:none;
+background:#888;
+color:white;
+border-radius:6px;
+cursor:pointer;
+}
+
+#resetBtn:hover{
+background:#666;
 }
 
 /* 文件夹 */
@@ -100,6 +117,8 @@ color:#0077cc;
 <input id="search" placeholder="搜索试卷..." oninput="searchFolders()">
 <button onclick="searchFolders()">搜索</button>
 </div>
+
+<button id="resetBtn" onclick="resetSearch()">返回全部</button>
 
 <div id="list"></div>
 
@@ -158,8 +177,11 @@ let folders=document.querySelectorAll(".folder")
 
 if(kw===""){
 folders.forEach(f=>f.style.display="block")
+document.getElementById("resetBtn").style.display="none"
 return
 }
+
+document.getElementById("resetBtn").style.display="inline-block"
 
 let results=[]
 
@@ -198,7 +220,19 @@ r.el.style.display="block"
 
 }
 
-/* 支持回车搜索 */
+function resetSearch(){
+
+document.getElementById("search").value=""
+
+let folders=document.querySelectorAll(".folder")
+
+folders.forEach(f=>f.style.display="block")
+
+document.getElementById("resetBtn").style.display="none"
+
+}
+
+/* Enter 搜索 */
 
 document.getElementById("search").addEventListener("keypress",function(e){
 if(e.key==="Enter"){
